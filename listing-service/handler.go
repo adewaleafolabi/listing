@@ -78,12 +78,14 @@ func CreateProperty(w http.ResponseWriter, r *http.Request) {
 		response["message"] = err.Error()
 		render.Status(r, 400)
 		render.JSON(w, r, response)
+		return
 	}
 
 	if err = db.SaveProperty(r.Context(), data); err != nil {
 		response["message"] = err.Error()
 		render.Status(r, 400)
 		render.JSON(w, r, response)
+		return
 	}
 
 	render.Status(r, http.StatusCreated)
