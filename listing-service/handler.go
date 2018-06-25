@@ -27,14 +27,13 @@ func GetProperty(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		response := make(map[string]string)
-		code:= 500
+		code:= http.StatusInternalServerError
 		response["message"] = err.Error()
-
 
 		switch err {
 		case sql.ErrNoRows:
 			response["message"] = "Not found"
-			code = 404
+			code = http.StatusNotFound
 		default:
 			response["message"] = err.Error()
 		}
@@ -60,9 +59,10 @@ func ListProperties(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		response := make(map[string]string)
 		response["message"] = err.Error()
-		render.Status(r, 500)
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, response)
 	} else {
+		render.Status(r, http.StatusOK)
 		render.JSON(w, r, props)
 	}
 }
@@ -76,14 +76,14 @@ func CreateProperty(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 
 		response["message"] = err.Error()
-		render.Status(r, 400)
+		render.Status(r, http.StatusBadRequest)
 		render.JSON(w, r, response)
 		return
 	}
 
 	if err = db.SaveProperty(r.Context(), data); err != nil {
 		response["message"] = err.Error()
-		render.Status(r, 400)
+		render.Status(r, http.StatusInternalServerError)
 		render.JSON(w, r, response)
 		return
 	}
