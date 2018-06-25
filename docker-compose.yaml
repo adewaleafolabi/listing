@@ -1,0 +1,27 @@
+version: "3.3"
+services:
+  postgres-db:
+    build: "./postgres"
+    restart: "always"
+    ports:
+      - "5432"
+    environment:
+      POSTGRES_USER: "property_mgr"
+      POSTGRES_PASSWORD: "property1234"
+      POSTGRES_DB: "property"
+      POSTGRES_HOST: "postgres-db"
+      POSTGRES_PORT: "5432"
+  property-service:
+    build: "."
+    command: "listing-service"
+    restart: "always"
+    ports:
+      - "8000:8000"
+    depends_on:
+      - "postgres-db"
+    environment:
+      POSTGRES_USER: "property_mgr"
+      POSTGRES_PASSWORD: "property1234"
+      POSTGRES_DB: "property"
+      POSTGRES_HOST: "postgres-db"
+      POSTGRES_PORT: "5432"
